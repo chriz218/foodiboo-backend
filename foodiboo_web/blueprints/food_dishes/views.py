@@ -1,5 +1,5 @@
 # Views for the Food Dishes
-from flask import Blueprint, render_template, Flask, request, flash, redirect, url_for
+from flask import Blueprint, render_template, Flask, request, flash, json, jsonify
 from werkzeug.security import generate_password_hash # This function allows one to hash a password
 from models.user import User
 from models.food import Food
@@ -9,6 +9,7 @@ from models.tag import Tag
 from flask_login import current_user
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
+from math import floor
 # from foodiboo_web.util.helpers import *
 
 food_dishes_blueprint = Blueprint('food_dishes',
@@ -123,9 +124,63 @@ def create():
 # Renders the food dish page
 @food_dishes_blueprint.route('/<food_name>', methods=["GET"])
 def show(food_name):
-    all_of_that_food = Food.select().where(name = food_name)
+    all_of_that_food = Food.select().where(Food.name == food_name)
     
-    
+    if len(all_of_that_food) != 0:
+        food_geolocation_arr = [food.geolocation for food in all_of_that_food]
+        food_id_arr = [food.id for food in all_of_that_food]
+        criterion_z1_list = []
+        criterion_z2_list = []
+        criterion_z3_list = []
+        criterion_z4_list = []
+        criterion_z5_list = []
+        average_c1 = []
+        average_c2 = []
+        average_c3 = []
+        average_c4 = []
+        average_c5 = []
+
+        for food_id_element in food_id_arr:
+            criterion_z1_list.append([e.criterion_z1 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+            criterion_z2_list.append([e.criterion_z2 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+            criterion_z3_list.append([e.criterion_z3 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+            criterion_z4_list.append([e.criterion_z4 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+            criterion_z5_list.append([e.criterion_z5 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+
+        for criterion in criterion_z1_list:
+            average_c1.append(floor(sum(criterion)/len(criterion)))
+        for criterion in criterion_z2_list:
+            average_c2.append(floor(sum(criterion)/len(criterion)))
+        for criterion in criterion_z3_list:
+            average_c3.append(floor(sum(criterion)/len(criterion)))
+        for criterion in criterion_z4_list:
+            average_c4.append(floor(sum(criterion)/len(criterion)))
+        for criterion in criterion_z5_list:
+            average_c5.append(floor(sum(criterion)/len(criterion)))
+
+
+        return jsonify({
+            # "all_of_that_food": all_of_that_food
+            "food_geolocation_arr": food_geolocation_arr,
+            "food_id_arr": food_id_arr,
+            "criterion_z1_list": criterion_z1_list,
+            "criterion_z2_list": criterion_z2_list,
+            "criterion_z3_list": criterion_z3_list,
+            "criterion_z4_list": criterion_z4_list,
+            "criterion_z5_list": criterion_z5_list,
+            "average_c1": average_c1,
+            "average_c2": average_c2,
+            "average_c3": average_c3,
+            "average_c4": average_c4,
+            "average_c5": average_c5
+        })
+    else:
+        return jsonify({
+            "err": "Food dish does not exist"
+        }), 500    
+
+
+
     # all_foods = food.all_foods
     # all_reviews = review.all_reviews
     # food_review = FoodReview.get_or_none(food_id = food.id)
@@ -137,10 +192,10 @@ def show(food_name):
     #     return redirect(url_for('home'))    
 
 # Search box
-@food_dishes_blueprint.route('/search', methods=["GET"])
-def search():
-    food_search = request.args.get('food_search')
-    return redirect(url_for('food_dishes.show', food_name = food_search))
+# @food_dishes_blueprint.route('/search', methods=["GET"])
+# def search():
+#     food_search = request.json.get('food_search')
+#     return redirect(url_for('food_dishes.show', food_name = food_search))
 
 
 @food_dishes_blueprint.route('/', methods=["GET"])
