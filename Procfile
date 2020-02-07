@@ -1,2 +1,1 @@
-release: python migrate.py
-web:gunicorn start:app
+web: python migrate.py; gunicorn start:app --preload
