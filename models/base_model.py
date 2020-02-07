@@ -9,7 +9,9 @@ class BaseModel(pw.Model):
     updated_at = pw.DateTimeField(default=datetime.datetime.now)
 
     def save(self, *args, **kwargs):
+        # self.errors = {}
         self.errors = []
+        # self.errors_arr = []
         self.validate()
 
         if len(self.errors) == 0:
@@ -25,4 +27,4 @@ class BaseModel(pw.Model):
 
     class Meta:
         database = db
-        legacy_table_names = False
+        legacy_table_names = False    
