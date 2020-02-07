@@ -1,5 +1,5 @@
 # Views for the Food Dishes
-from flask import Blueprint, render_template, Flask, request, flash, json, jsonify
+from flask import Blueprint, Flask, request, json, jsonify
 from werkzeug.security import generate_password_hash # This function allows one to hash a password
 from models.user import User
 from models.food import Food
@@ -178,36 +178,3 @@ def show(food_name):
         return jsonify({
             "err": "Food dish does not exist"
         }), 500    
-
-
-
-    # all_foods = food.all_foods
-    # all_reviews = review.all_reviews
-    # food_review = FoodReview.get_or_none(food_id = food.id)
-    # if food is not None:
-    #     review = Review.get_or_none(id = food_review.review_id)
-    #     return render_template('food_dishes/foodprofile.html', food = food, review = review) ## Need to create a page to display all reviews for a dish
-    # else:
-    #     flash("Food dish does not exist")
-    #     return redirect(url_for('home'))    
-
-# Search box
-# @food_dishes_blueprint.route('/search', methods=["GET"])
-# def search():
-#     food_search = request.json.get('food_search')
-#     return redirect(url_for('food_dishes.show', food_name = food_search))
-
-
-@food_dishes_blueprint.route('/', methods=["GET"])
-def index():
-    return "FOOD_DISHES"
-
-
-@food_dishes_blueprint.route('/<id>/edit', methods=['GET'])
-def edit(id):
-    pass
-
-
-@food_dishes_blueprint.route('/<id>', methods=['POST'])
-def update(id):
-    pass

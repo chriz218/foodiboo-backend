@@ -1,5 +1,6 @@
 import os
 
+JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
 
 class Config(object):
     DEBUG = False
@@ -7,7 +8,6 @@ class Config(object):
     CSRF_ENABLED = True
     SECRET_KEY = os.environ.get(
         'SECRET_KEY') or os.urandom(32)
-
 
 class ProductionConfig(Config):
     DEBUG = False

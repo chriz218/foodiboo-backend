@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, Flask, request, flash, json, jsonify
+from flask import Blueprint, Flask, request, json, jsonify
 from werkzeug.security import generate_password_hash # This function allows one to hash a password
 from models.user import User
 from models.food import Food
@@ -14,14 +14,8 @@ users_blueprint = Blueprint('users',
                             template_folder='templates')
 
 
-
-# @users_blueprint.route('/signup', methods=['GET'])
-# def new():
-#     return render_template('users/new.html')
-
-
-@users_blueprint.route('/create', methods=['POST'])
-def create():
+@users_blueprint.route('/sign_up', methods=['POST'])
+def sign_up():
     name = request.json.get('name')
     email = request.json.get('email')
     password = request.json.get('password')
@@ -37,7 +31,6 @@ def create():
         return jsonify({
             'err': new_user_instance.errors
         }), 500
-        # return jsonify(new_user_instance.errors), 500
 
 
 @users_blueprint.route('/<username>', methods=["GET"])
@@ -53,17 +46,3 @@ def show(username):
     else:
         return jsonify({"err": "Something went wrong"}), 500
 
-
-@users_blueprint.route('/', methods=["GET"])
-def index():
-    return "USERS"
-
-
-@users_blueprint.route('/<id>/edit', methods=['GET'])
-def edit(id):
-    pass
-
-
-@users_blueprint.route('/<id>', methods=['POST'])
-def update(id):
-    pass
