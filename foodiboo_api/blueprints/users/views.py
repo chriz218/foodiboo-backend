@@ -30,7 +30,7 @@ def sign_up():
     else:
         return jsonify({
             'err': new_user_instance.errors
-        }), 500
+        }), 400
 
 
 @users_api_blueprint.route('/<username>', methods=["GET"])
