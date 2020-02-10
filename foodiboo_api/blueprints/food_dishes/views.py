@@ -12,18 +12,18 @@ from werkzeug.utils import secure_filename
 from math import floor
 # from foodiboo_web.util.helpers import *
 
-food_dishes_blueprint = Blueprint('food_dishes',
+food_dishes_api_blueprint = Blueprint('food_dishes',
                             __name__,
                             template_folder='templates')
 
 
 # Renders the create review page 
-@food_dishes_blueprint.route('/new', methods=['GET'])
+@food_dishes_api_blueprint.route('/new', methods=['GET'])
 def new():
     return render_template('food_dishes/new.html')
 
 # Create a review
-@food_dishes_blueprint.route('/create', methods=['POST'])
+@food_dishes_api_blueprint.route('/create', methods=['POST'])
 # def create():
 #     food_name = request.json.get('food_name')
 #     criterion_z1 = request.json.get('criterion_z1')
@@ -122,7 +122,7 @@ def create():
             
     
 # Renders the food dish page
-@food_dishes_blueprint.route('/<food_name>', methods=["GET"])
+@food_dishes_api_blueprint.route('/<food_name>', methods=["GET"])
 def show(food_name):
     all_of_that_food = Food.select().where(Food.name == food_name)
     
@@ -180,7 +180,7 @@ def show(food_name):
         }), 500    
 
 
-@food_dishes_blueprint.route('/<food_name>/<id>', methods=["GET"])
+@food_dishes_api_blueprint.route('/<food_name>/<id>', methods=["GET"])
 def show_spec(id):
     food = Food.get_or_none(id == id)
 

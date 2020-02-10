@@ -14,13 +14,13 @@ from flask_jwt_extended import (
 )
 from config import JWT_SECRET_KEY 
 
-sessions_blueprint = Blueprint('sessions',
+sessions_api_blueprint = Blueprint('sessions',
                             __name__,
                             template_folder='templates')
 
 jwt = JWTManager(app)
 
-@sessions_blueprint.route('/login', methods=['POST'])
+@sessions_api_blueprint.route('/login', methods=['POST'])
 def login():
     if not request.is_json:
         return jsonify({"msg": "Missing JSON in request"}), 400
@@ -50,7 +50,7 @@ def login():
             }), 500
 
 
-@sessions_blueprint.route('/protected', methods=['GET'])
+@sessions_api_blueprint.route('/protected', methods=['GET'])
 @jwt_required
 def protected():
     # Access the identity of the current user with get_jwt_identity
@@ -59,7 +59,7 @@ def protected():
 
 
 # # Endpoint for revoking the current users access token
-# @sessions_blueprint.route('/logout', methods=['DELETE'])
+# @sessions_api_blueprint.route('/logout', methods=['DELETE'])
 # @jwt_required
 # def logout():
 #     jti = get_raw_jwt()['jti']
@@ -68,7 +68,7 @@ def protected():
 
 
 # # Endpoint for revoking the current users refresh token
-# @sessions_blueprint.route('/logout2', methods=['DELETE'])
+# @sessions_api_blueprint.route('/logout2', methods=['DELETE'])
 # @jwt_refresh_token_required
 # def logout2():
 #     jti = get_raw_jwt()['jti']
