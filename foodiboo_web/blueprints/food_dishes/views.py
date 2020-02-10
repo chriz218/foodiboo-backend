@@ -34,7 +34,7 @@ def new():
 #     food_picture = request.json.get('food_picture')
 #     geolocation = request.json.get('location')
 #     food_already_exist = Food.get_or_none(name = food_name, geolocation = geolocation)
-#     if food_already_exist():
+#     if food_already_exist:
 #         new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
 #         if new_review_instance.save():
 #             return jsonify({
@@ -174,6 +174,38 @@ def show(food_name):
             "average_c4": average_c4,
             "average_c5": average_c5
         })
+    else:
+        return jsonify({
+            "err": "Food dish does not exist"
+        }), 500    
+
+
+@food_dishes_blueprint.route('/<food_name>/<id>', methods=["GET"])
+def show_spec(id):
+    food = Food.get_or_none(id == id)
+
+    if food:
+        reviews = Review.select().where(Review.food_id == id)
+        criterion_z1_list = [e.criterion_z1 for e in reviews]
+        criterion_z2_list = [e.criterion_z2 for e in reviews]
+        criterion_z3_list = [e.criterion_z3 for e in reviews]
+        criterion_z4_list = [e.criterion_z4 for e in reviews]
+        criterion_z5_list = [e.criterion_z5 for e in reviews]
+        reviewers_list = []
+
+        for i in [reviewer.user_id for reviewer in reviews]:
+            reviewers_list.append(User.get_by_id(i).name)
+
+        return jsonify({
+            "criterion_z1_list": criterion_z1_list,
+            "criterion_z2_list": criterion_z2_list,
+            "criterion_z3_list": criterion_z3_list,
+            "criterion_z4_list": criterion_z4_list,
+            "criterion_z5_list": criterion_z5_list,
+            "reviewers_list": reviewers_list
+        })
+
+        
     else:
         return jsonify({
             "err": "Food dish does not exist"

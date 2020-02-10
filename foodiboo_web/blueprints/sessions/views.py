@@ -10,7 +10,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from flask_jwt_extended import (
     JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
+    get_jwt_identity, get_raw_jwt, jwt_refresh_token_required
 )
 from config import JWT_SECRET_KEY 
 
@@ -56,4 +56,23 @@ def protected():
     # Access the identity of the current user with get_jwt_identity
     current_user = get_jwt_identity()
     return jsonify(logged_in_as=current_user), 200
+
+
+# # Endpoint for revoking the current users access token
+# @sessions_blueprint.route('/logout', methods=['DELETE'])
+# @jwt_required
+# def logout():
+#     jti = get_raw_jwt()['jti']
+#     blacklist.add(jti)
+#     return jsonify({"msg": "Successfully logged out"}), 200
+
+
+# # Endpoint for revoking the current users refresh token
+# @sessions_blueprint.route('/logout2', methods=['DELETE'])
+# @jwt_refresh_token_required
+# def logout2():
+#     jti = get_raw_jwt()['jti']
+#     blacklist.add(jti)
+#     return jsonify({"msg": "Successfully logged out"}), 200    
+
 
