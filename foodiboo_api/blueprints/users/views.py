@@ -44,5 +44,9 @@ def show(username):
             "reviews": reviews
         })
     else:
-        return jsonify({"err": "Something went wrong"}), 500
+        return jsonify({"err": "Something went wrong"}), 400
+
+
+
+
 

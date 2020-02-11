@@ -33,7 +33,7 @@ def login():
     if user is None:
         return jsonify({
                 "err": "Username does not exist"
-        }), 500
+        }), 400
     else:
         # hashed_password = user.password    
         result = check_password_hash(user.password, password)
@@ -47,7 +47,7 @@ def login():
         else:
             return jsonify({
                 "err": "Wrong username or password"
-            }), 500
+            }), 400
 
 
 @sessions_api_blueprint.route('/protected', methods=['GET'])
