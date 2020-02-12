@@ -10,20 +10,22 @@ from flask_login import current_user
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from math import floor
-# from foodiboo_web.util.helpers import *
+from foodiboo_api.util.helpers import *
+from config import S3_LOCATION
 
 food_dishes_api_blueprint = Blueprint('food_dishes',
                             __name__,
                             template_folder='templates')
 
-# Renders the create review page 
-@food_dishes_api_blueprint.route('/new', methods=['GET'])
-def new():
-    return render_template('food_dishes/new.html')
+# # Renders the create review page 
+# @food_dishes_api_blueprint.route('/new', methods=['GET'])
+# def new():
+#     return render_template('food_dishes/new.html')
 
 # Create a review
 @food_dishes_api_blueprint.route('/create', methods=['POST'])
 def create():
+    logged_in_user_id = request.json.get("user_id")
     food_name = request.json.get('food_name')
     criterion_z1 = request.json.get('criterion_z1')
     criterion_z2 = request.json.get('criterion_z2')
@@ -32,17 +34,19 @@ def create():
     criterion_z5 = request.json.get('criterion_z5')
     food_picture = request.json.get('food_picture')
     latitude = request.json.get('latitude')
-    longtitude = request.json.get('longtitude')
+    longitude = request.json.get('longitude')
     price = request.json.get('price')
-    food_already_exist = Food.get_or_none(name = food_name, latitude = latitude, longtitude = longtitude, price = price)
+    tag_list = request.json.get('tag_list')
+
+    food_already_exist = Food.get_or_none(name = food_name, latitude = latitude, longitude = longitude, price = price)
     if food_already_exist:
 
-        review_already_exist = Review.get_or_none(user_id = current_user.id, food_id = food_already_exist.id)
+        review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist.id)
 
         if review_already_exist:
             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
         else: 
-            new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
+            new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
             if new_review_instance.save():
                 if "user_file" not in request.files:
                     return jsonify({"err": "No user_file key in request.files"}),400
@@ -53,27 +57,43 @@ def create():
                     file.filename = secure_filename(file.filename)
                     output = upload_file_to_s3(file,S3_BUCKET_NAME)
                     food_picture = str(output)
-                    new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
+                    new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
                     if new_review_instance.save():
+                    # Creation of tag    
+                        for tag_element in tag_list:
+                            tag_already_exist = Tag.get_or_none(name = tag_element)
+                            if tag_already_exist:
+                                new_tag_review_instance = TagReview(review_id = new_review_instance.id, tag_id = tag_already_exist.id)
+                                new_tag_review_instance.save()
+                            else:
+                                new_tag_instance = Tag(name = tag_element)
+                                new_tag_instance.save()
+                                new_tag_instance_id = Tag.get_or_none(name = tag_element).id
+                                new_tag_review_instance = TagReview(review_id = new_review_instance.id, tag_id = new_tag_instance_id)
+                                new_tag_review_instance.save()
                     # if food image upload success       
                         return jsonify({
-                            "user_id": current_user.id,
+                            "logged_in_user_id": logged_in_user_id,
                             "food_picture": food_picture,
                             "criterion_z1": criterion_z1,
                             "criterion_z2": criterion_z2,
                             "criterion_z3": criterion_z3,
                             "criterion_z4": criterion_z4,
                             "criterion_z5": criterion_z5,
-                            "food_id": food_already_exist.id
+                            "food_id": food_already_exist.id,
+                            "price": price,
+                            "latitude": latitude,
+                            "longitude": longitude,
+                            "tag_list": tag_list
                         }), 200
                     else:
                         # if jsonify error 
                         return jsonify({"err": "Something went wrong"}), 400
                 else:
-                    return jsonify({"err": "Something went wrong"}),400
+                    return jsonify({"err": "Something went wrong"}), 400
                     # if image fail to upload
     else:
-        new_food_instance = Food(name = food_name, longitude = longitude, latitude = latitude)
+        new_food_instance = Food(name = food_name, longitude = longitude, latitude = latitude, price = price)
         if new_food_instance.save(): 
             if "user_file" not in request.files:
                 return jsonify({"err": "No user_file key in request.files"}),400
@@ -84,18 +104,35 @@ def create():
                 file.filename = secure_filename(file.filename)
                 output = upload_file_to_s3(file,S3_BUCKET_NAME)
                 food_picture = str(output)
-                new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
+                new_food_instance_id = Food.get_or_none(name = food_name, longitude = longitude, latitude = latitude).id
+                new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance_id)
                 if new_review_instance.save():
+                # Creation of tag    
+                    for tag_element in tag_list:
+                        tag_already_exist = Tag.get_or_none(name = tag_element)
+                        if tag_already_exist:
+                            new_tag_review_instance = TagReview(review_id = new_review_instance.id, tag_id = tag_already_exist.id)
+                            new_tag_review_instance.save()
+                        else:
+                            new_tag_instance = Tag(name = tag_element)
+                            new_tag_instance.save()
+                            new_tag_instance_id = Tag.get_or_none(name = tag_element).id
+                            new_tag_review_instance = TagReview(review_id = new_review_instance.id, tag_id = new_tag_instance_id)
+                            new_tag_review_instance.save()   
                 # if food image upload success       
                     return jsonify({
-                        "user_id": current_user.id,
+                        "logged_in_user_id": logged_in_user_id,
                         "food_picture": food_picture,
                         "criterion_z1": criterion_z1,
                         "criterion_z2": criterion_z2,
                         "criterion_z3": criterion_z3,
                         "criterion_z4": criterion_z4,
                         "criterion_z5": criterion_z5,
-                        "food_id": food_already_exist.id
+                        "food_id": new_food_instance_id,
+                        "price": price,
+                        "latitude": latitude,
+                        "longitude": longitude,
+                        "tag_list": tag_list
                     }), 200
                 else:
                     # if jsonify error 
@@ -106,10 +143,110 @@ def create():
         else:
             return jsonify({"err": "Something went wrong"}), 400
             # if review instance failed to save
-    
+
+
+
+
+
+
+
+
+# def create():
+#     food_name = request.json.get('food_name')
+#     criterion_z1 = request.json.get('criterion_z1')
+#     criterion_z2 = request.json.get('criterion_z2')
+#     criterion_z3 = request.json.get('criterion_z3')
+#     criterion_z4 = request.json.get('criterion_z4')
+#     criterion_z5 = request.json.get('criterion_z5')
+#     food_picture = request.json.get('food_picture')
+#     latitude = request.json.get('latitude')
+#     longitude = request.json.get('longitude')
+#     price = request.json.get('price')
+#     food_already_exist = Food.get_or_none(name = food_name, latitude = latitude, longitude = longitude, price = price)
+#     if food_already_exist:
+
+#         review_already_exist = Review.get_or_none(user_id = current_user.id, food_id = food_already_exist.id)
+
+#         if review_already_exist:
+#             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
+#         else: 
+#             new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
+#             if new_review_instance.save():
+#                 if "user_file" not in request.files:
+#                     return jsonify({"err": "No user_file key in request.files"}),400
+#                 file = request.files['user_file']
+#                 if file.filename == "":
+#                     return jsonify({"err": "Please select a file"}),400
+#                 if file and allowed_file(file.filename):
+#                     file.filename = secure_filename(file.filename)
+#                     output = upload_file_to_s3(file,S3_BUCKET_NAME)
+#                     food_picture = str(output)
+#                     new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
+#                     if new_review_instance.save():
+#                     # if food image upload success       
+#                         return jsonify({
+#                             "user_id": current_user.id,
+#                             "food_picture": food_picture,
+#                             "criterion_z1": criterion_z1,
+#                             "criterion_z2": criterion_z2,
+#                             "criterion_z3": criterion_z3,
+#                             "criterion_z4": criterion_z4,
+#                             "criterion_z5": criterion_z5,
+#                             "food_id": food_already_exist.id
+#                         }), 200
+#                     else:
+#                         # if jsonify error 
+#                         return jsonify({"err": "Something went wrong"}), 400
+#                 else:
+#                     return jsonify({"err": "Something went wrong"}), 400
+#                     # if image fail to upload
+#     else:
+#         new_food_instance = Food(name = food_name, longitude = longitude, latitude = latitude)
+#         if new_food_instance.save(): 
+#             if "user_file" not in request.files:
+#                 return jsonify({"err": "No user_file key in request.files"}),400
+#             file = request.files['user_file']
+#             if file.filename == "":
+#                 return jsonify({"err": "Please select a file"}),400
+#             if file and allowed_file(file.filename):
+#                 file.filename = secure_filename(file.filename)
+#                 output = upload_file_to_s3(file,S3_BUCKET_NAME)
+#                 food_picture = str(output)
+#                 new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
+#                 if new_review_instance.save():
+#                 # if food image upload success       
+#                     return jsonify({
+#                         "user_id": current_user.id,
+#                         "food_picture": food_picture,
+#                         "criterion_z1": criterion_z1,
+#                         "criterion_z2": criterion_z2,
+#                         "criterion_z3": criterion_z3,
+#                         "criterion_z4": criterion_z4,
+#                         "criterion_z5": criterion_z5,
+#                         "food_id": food_already_exist.id
+#                     }), 200
+#                 else:
+#                     # if jsonify error 
+#                     return jsonify({"err": "Something went wrong"}), 400
+#             else:
+#                 return jsonify({"err": "Something went wrong"}),400
+#                 # if image fail to upload
+#         else:
+#             return jsonify({"err": "Something went wrong"}), 400
+#             # if review instance failed to save
+
+
+
+
+
+
+
+
+
 # Renders the food dish page
 @food_dishes_api_blueprint.route('/<food_name>', methods=["GET"])
 def show(food_name):
+    # food_name = request.json.get('food_name')
     all_of_that_food = Food.select().where(Food.name == food_name)
     
     if len(all_of_that_food) != 0:
@@ -125,6 +262,7 @@ def show(food_name):
         average_c3 = []
         average_c4 = []
         average_c5 = []
+        first_review_food_pic = []
 
         for food_id_element in food_id_arr:
             criterion_z1_list.append([e.criterion_z1 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
@@ -132,6 +270,7 @@ def show(food_name):
             criterion_z3_list.append([e.criterion_z3 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
             criterion_z4_list.append([e.criterion_z4 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
             criterion_z5_list.append([e.criterion_z5 for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)])
+            first_review_food_pic.append(S3_LOCATION + [e.food_picture for e in Review.select().join(Food, on=(Food.id == Review.food_id)).where(Food.id == food_id_element)][0])
 
         for criterion in criterion_z1_list:
             average_c1.append(floor(sum(criterion)/len(criterion)))
@@ -157,7 +296,8 @@ def show(food_name):
             "average_c2": average_c2,
             "average_c3": average_c3,
             "average_c4": average_c4,
-            "average_c5": average_c5
+            "average_c5": average_c5,
+            "first_review_food_pic": first_review_food_pic
         })
     else:
         return jsonify({

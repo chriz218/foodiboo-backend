@@ -1,7 +1,9 @@
 from models.base_model import BaseModel
 import peewee as pw
 import re
+from config import S3_LOCATION
 from werkzeug.security import generate_password_hash
+from playhouse.hybrid import hybrid_property
 
 class User(BaseModel):
     name = pw.CharField(unique=True)
@@ -32,3 +34,7 @@ class User(BaseModel):
         
         if self.password:
             self.password = generate_password_hash(self.password)
+
+    @hybrid_property
+    def profile_image_url(self):
+        return S3_LOCATION + self.profile_image        

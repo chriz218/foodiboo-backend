@@ -3,6 +3,7 @@ from models.user import User
 from models.food import Food
 import peewee as pw
 import re
+from config import S3_LOCATION
 from playhouse.hybrid import hybrid_property # To get the url of uploaded pictures
 
 class Review(BaseModel):
@@ -17,4 +18,8 @@ class Review(BaseModel):
 
     # user.all_user_reviews will give all the reviews written by the user
     # food.all_food_reviews will give all the reviews of that food
+
+    @hybrid_property
+    def food_picture_url(self):
+        return S3_LOCATION + self.food_picture
 
