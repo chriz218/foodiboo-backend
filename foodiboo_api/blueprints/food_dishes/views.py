@@ -16,7 +16,6 @@ food_dishes_api_blueprint = Blueprint('food_dishes',
                             __name__,
                             template_folder='templates')
 
-
 # Renders the create review page 
 @food_dishes_api_blueprint.route('/new', methods=['GET'])
 def new():
@@ -24,51 +23,6 @@ def new():
 
 # Create a review
 @food_dishes_api_blueprint.route('/create', methods=['POST'])
-# def create():
-#     food_name = request.json.get('food_name')
-#     criterion_z1 = request.json.get('criterion_z1')
-#     criterion_z2 = request.json.get('criterion_z2')
-#     criterion_z3 = request.json.get('criterion_z3')
-#     criterion_z4 = request.json.get('criterion_z4')
-#     criterion_z5 = request.json.get('criterion_z5')
-#     food_picture = request.json.get('food_picture')
-#     geolocation = request.json.get('location')
-#     food_already_exist = Food.get_or_none(name = food_name, geolocation = geolocation)
-#     if food_already_exist:
-#         new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
-#         if new_review_instance.save():
-#             return jsonify({
-#                 "user_id": current_user.id,
-#                 "food_picture": food_picture,
-#                 "criterion_z1": criterion_z1,
-#                 "criterion_z2": criterion_z2,
-#                 "criterion_z3": criterion_z3,
-#                 "criterion_z4": criterion_z4,
-#                 "criterion_z5": criterion_z5,
-#                 "food_id": food_already_exist.id
-#             }), 200
-#         else:
-#             return jsonify({"err": "Something went wrong"}), 500
-#     else:
-#         new_food_instance = Food(name = food_name, geolocation = geolocation)
-#         if new_food_instance.save():
-#             new_review_instance = Review(user_id = current_user.id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
-#             if new_review_instance.save():
-#                 return jsonify({
-#                     "user_id": current_user.id,
-#                     "food_picture": food_picture,
-#                     "criterion_z1": criterion_z1,
-#                     "criterion_z2": criterion_z2,
-#                     "criterion_z3": criterion_z3,
-#                     "criterion_z4": criterion_z4,
-#                     "criterion_z5": criterion_z5,
-#                     "food_id": food_already_exist.id
-#                 }), 200
-#             else:
-#                 return jsonify({"err": "Something went wrong"}), 500
-#         else:
-#             return jsonify({"err": "Something went wrong"}), 500
-
 def create():
     food_name = request.json.get('food_name')
     criterion_z1 = request.json.get('criterion_z1')
@@ -190,7 +144,6 @@ def show(food_name):
         for criterion in criterion_z5_list:
             average_c5.append(floor(sum(criterion)/len(criterion)))
 
-
         return jsonify({
             # "all_of_that_food": all_of_that_food
             "food_geolocation_arr": food_geolocation_arr,
@@ -210,7 +163,6 @@ def show(food_name):
         return jsonify({
             "err": "Food dish does not exist"
         }), 400 
-
 
 @food_dishes_api_blueprint.route('/<food_name>/<id>', methods=["GET"])
 def show_spec(id):
@@ -237,7 +189,6 @@ def show_spec(id):
             "reviewers_list": reviewers_list
         })
 
-        
     else:
         return jsonify({
             "err": "Food dish does not exist"

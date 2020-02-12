@@ -5,5 +5,5 @@ import peewee as pw
 
 
 class TagReview(BaseModel):
-    review = pw.ForeignKeyField(Review, backref="")
-    tag = pw.ForeignKeyField(Tag, backref="")
+    review = pw.ForeignKeyField(Review, backref="all_reviews")
+    tag = pw.ForeignKeyField(Tag, backref="all_tags")
