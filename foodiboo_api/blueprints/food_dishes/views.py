@@ -11,7 +11,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from math import floor
 from foodiboo_api.util.helpers import *
-from config import S3_LOCATION
+from config import S3_BUCKET_NAME, S3_LOCATION
 
 food_dishes_api_blueprint = Blueprint('food_dishes',
                             __name__,
@@ -38,7 +38,13 @@ def create():
     price = request.json.get('price')
     tag_list = request.json.get('tag_list')
 
+
+
+    ## This line below will not work                        ## Need to put a range here
     food_already_exist = Food.get_or_none(name = food_name, latitude = latitude, longitude = longitude, price = price)
+    
+    
+    
     if food_already_exist:
 
         review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist.id)
@@ -252,6 +258,7 @@ def show(food_name):
     if len(all_of_that_food) != 0:
         food_geolocation_arr = [food.geolocation for food in all_of_that_food]
         food_id_arr = [food.id for food in all_of_that_food]
+        food_price_arr = [food.price for food in all_of_that_food]
         criterion_z1_list = []
         criterion_z2_list = []
         criterion_z3_list = []
@@ -305,7 +312,7 @@ def show(food_name):
         }), 400 
 
 @food_dishes_api_blueprint.route('/<food_name>/<id>', methods=["GET"])
-def show_spec(id):
+def show_spec(food_name, id):
     food = Food.get_or_none(id == id)
 
     if food:
@@ -316,6 +323,7 @@ def show_spec(id):
         criterion_z4_list = [e.criterion_z4 for e in reviews]
         criterion_z5_list = [e.criterion_z5 for e in reviews]
         reviewers_list = []
+        food_pic_list = [e.food_picture for e in reviews]
 
         for i in [reviewer.user_id for reviewer in reviews]:
             reviewers_list.append(User.get_by_id(i).name)
@@ -326,7 +334,8 @@ def show_spec(id):
             "criterion_z3_list": criterion_z3_list,
             "criterion_z4_list": criterion_z4_list,
             "criterion_z5_list": criterion_z5_list,
-            "reviewers_list": reviewers_list
+            "reviewers_list": reviewers_list,
+            "food_pic_list": food_pic_list
         })
 
     else:
