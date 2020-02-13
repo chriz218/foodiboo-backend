@@ -323,7 +323,10 @@ def show_spec(food_name, id):
         criterion_z4_list = [e.criterion_z4 for e in reviews]
         criterion_z5_list = [e.criterion_z5 for e in reviews]
         reviewers_list = []
-        food_pic_list = [e.food_picture for e in reviews]
+        food_pic_list = []
+
+        for i in [e.food_picture for e in reviews]:
+            food_pic_list.append(S3_LOCATION + i)
 
         for i in [reviewer.user_id for reviewer in reviews]:
             reviewers_list.append(User.get_by_id(i).name)
