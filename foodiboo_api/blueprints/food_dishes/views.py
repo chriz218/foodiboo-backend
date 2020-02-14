@@ -159,14 +159,14 @@ def create():
     criterion_z3 = request.json.get('criterion_z3')
     criterion_z4 = request.json.get('criterion_z4')
     criterion_z5 = request.json.get('criterion_z5')
-    food_picture = request.json.get('food_picture')
+    # food_picture = request.json.get('food_picture')
     latitude = request.json.get('latitude')
     longitude = request.json.get('longitude')
     price = request.json.get('price')
     # tag_list = request.json.get('tag_list')
                       
     food_already_exist = Food.select().where(Food.name == food_name, Food.latitude > latitude - 0.0002, Food.latitude < latitude + 0.0002, Food.longitude > longitude - 0.0002, Food.longitude < longitude + 0.0002)
-    
+
     jsonify({"err":"test1"})
     if food_already_exist:
 
