@@ -164,15 +164,14 @@ def create():
     longitude = request.json.get('longitude')
     price = request.json.get('price')
     # tag_list = request.json.get('tag_list')
-
-
-
-    ## This line below will not work                        
+                      
     food_already_exist = Food.select().where(Food.name == food_name, Food.latitude > latitude - 0.0002, Food.latitude < latitude + 0.0002, Food.longitude > longitude - 0.0002, Food.longitude < longitude + 0.0002)
     
+    jsonify({"err":"test1"})
     if food_already_exist:
 
         review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist.id)
+        jsonify({"err":"test2"})
 
         if review_already_exist:
             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
