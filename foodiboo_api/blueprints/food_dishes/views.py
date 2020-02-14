@@ -245,7 +245,7 @@ def create():
                 output = upload_file_to_s3(file,S3_BUCKET_NAME)
                 food_picture = str(output)
                 new_food_instance_id = Food.get_or_none(name = food_name, longitude = longitude, latitude = latitude)
-                new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance_id)
+                new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance_id.id)
                 if new_review_instance.save():
                 # Creation of tag    
                     # for tag_element in tag_list:
