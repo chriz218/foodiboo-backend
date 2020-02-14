@@ -153,17 +153,17 @@ food_dishes_api_blueprint = Blueprint('food_dishes',
 
 def create():
 
-    logged_in_user_id = request.files['user_id']
-    food_name = request.files['food_name']
-    criterion_z1 =  request.files['criterion_z1']
-    criterion_z2 =  request.files['criterion_z2']
-    criterion_z3 =  request.files['criterion_z3']
-    criterion_z4 =  request.files['criterion_z4']
-    criterion_z5 =  request.files['criterion_z5']
+    logged_in_user_id = request.form.get('user_id')
+    food_name = request.form.get('food_name')
+    criterion_z1 =  request.form.get('criterion_z1')
+    criterion_z2 =  request.form.get('criterion_z2')
+    criterion_z3 =  request.form.get('criterion_z3')
+    criterion_z4 =  request.form.get('criterion_z4')
+    criterion_z5 =  request.form.get('criterion_z5')
     food_picture =  request.files['food_picture']
-    latitude =  request.files['latitude']
-    longitude = request.files['longitude']
-    price = request.files['price']
+    latitude =  request.form.get('latitude')
+    longitude = request.form.get('longitude')
+    price = request.form.get('price')
 
     # logged_in_user_id = request.json.get("user_id")
     # food_name = request.json.get('food_name')
