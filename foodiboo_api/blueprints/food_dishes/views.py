@@ -159,7 +159,7 @@ def create():
     criterion_z3 = request.json.get('criterion_z3')
     criterion_z4 = request.json.get('criterion_z4')
     criterion_z5 = request.json.get('criterion_z5')
-    # food_picture = request.json.get('food_picture')
+    food_picture = request.json.get('food_picture')
     latitude = request.json.get('latitude')
     longitude = request.json.get('longitude')
     price = request.json.get('price')
