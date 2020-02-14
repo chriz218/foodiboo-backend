@@ -152,8 +152,8 @@ food_dishes_api_blueprint = Blueprint('food_dishes',
 
 
 def create():
-    
-    logged_in_user_id = request.files['logged_in_user_id']
+
+    logged_in_user_id = request.files['user_id']
     food_name = request.files['food_name']
     criterion_z1 =  request.files['criterion_z1']
     criterion_z2 =  request.files['criterion_z2']
