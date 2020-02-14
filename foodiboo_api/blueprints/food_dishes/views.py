@@ -237,8 +237,8 @@ def create():
         new_food_instance = Food(name = food_name, longitude = longitude, latitude = latitude, price = price)
         if new_food_instance.save(): 
             print(food_picture)
-            print(food_picture.files)
-            file = food_picture.files['food_picture']            
+            # print(food_picture.files)
+            file = request.files['food_picture']            
             print(file.filename)
             if file and allowed_file(file.filename):
                 file.filename = secure_filename(file.filename)
