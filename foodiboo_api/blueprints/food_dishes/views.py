@@ -163,7 +163,7 @@ def create():
     latitude = request.json.get('latitude')
     longitude = request.json.get('longitude')
     price = request.json.get('price')
-    tag_list = request.json.get('tag_list')
+    # tag_list = request.json.get('tag_list')
 
 
 
@@ -210,8 +210,8 @@ def create():
                             "food_id": food_already_exist.id,
                             "price": price,
                             "latitude": latitude,
-                            "longitude": longitude,
-                            "tag_list": tag_list
+                            "longitude": longitude
+                            # "tag_list": tag_list
                         }), 200
                     else:
                         # if jsonify error 
@@ -254,8 +254,8 @@ def create():
                         "food_id": new_food_instance_id,
                         "price": price,
                         "latitude": latitude,
-                        "longitude": longitude,
-                        "tag_list": tag_list
+                        "longitude": longitude
+                        # "tag_list": tag_list
                     }), 200
                 else:
                     # if jsonify error 
@@ -319,7 +319,6 @@ def show(food_name):
     all_of_that_food = Food.select().where(Food.name == food_name)
     
     if len(all_of_that_food) != 0:
-        food_geolocation_arr = [food.geolocation for food in all_of_that_food]
         food_id_arr = [food.id for food in all_of_that_food]
         food_price_arr = [food.price for food in all_of_that_food]
         criterion_z1_list = []
@@ -355,7 +354,6 @@ def show(food_name):
 
         return jsonify({
             # "all_of_that_food": all_of_that_food
-            "food_geolocation_arr": food_geolocation_arr,
             "food_id_arr": food_id_arr,
             "criterion_z1_list": criterion_z1_list,
             "criterion_z2_list": criterion_z2_list,
