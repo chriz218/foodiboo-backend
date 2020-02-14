@@ -155,15 +155,15 @@ def create():
 
     logged_in_user_id = request.form.get('user_id')
     food_name = request.form.get('food_name')
-    criterion_z1 =  request.form.get('criterion_z1')
-    criterion_z2 =  request.form.get('criterion_z2')
-    criterion_z3 =  request.form.get('criterion_z3')
-    criterion_z4 =  request.form.get('criterion_z4')
-    criterion_z5 =  request.form.get('criterion_z5')
+    criterion_z1 =  int(request.form.get('criterion_z1'))
+    criterion_z2 =  int(request.form.get('criterion_z2'))
+    criterion_z3 =  int(request.form.get('criterion_z3'))
+    criterion_z4 =  int(request.form.get('criterion_z4'))
+    criterion_z5 =  int(request.form.get('criterion_z5'))
     food_picture =  request.files['food_picture']
-    latitude =  request.form.get('latitude')
-    longitude = request.form.get('longitude')
-    price = request.form.get('price')
+    latitude =  float(request.form.get('latitude'))
+    longitude = float(request.form.get('longitude'))
+    price = float(request.form.get('price'))
 
     # logged_in_user_id = request.json.get("user_id")
     # food_name = request.json.get('food_name')
