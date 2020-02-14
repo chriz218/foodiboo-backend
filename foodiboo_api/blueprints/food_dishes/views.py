@@ -152,20 +152,35 @@ food_dishes_api_blueprint = Blueprint('food_dishes',
 
 
 def create():
-    logged_in_user_id = request.json.get("user_id")
-    food_name = request.json.get('food_name')
-    criterion_z1 = request.json.get('criterion_z1')
-    criterion_z2 = request.json.get('criterion_z2')
-    criterion_z3 = request.json.get('criterion_z3')
-    criterion_z4 = request.json.get('criterion_z4')
-    criterion_z5 = request.json.get('criterion_z5')
-    food_picture = request.json.get('food_picture')
-    latitude = request.json.get('latitude')
-    longitude = request.json.get('longitude')
-    price = request.json.get('price')
+    
+    logged_in_user_id = request.files['logged_in_user_id']
+    food_name = request.files['food_name']
+    criterion_z1 =  request.files['criterion_z1']
+    criterion_z2 =  request.files['criterion_z2']
+    criterion_z3 =  request.files['criterion_z3']
+    criterion_z4 =  request.files['criterion_z4']
+    criterion_z5 =  request.files['criterion_z5']
+    food_picture =  request.files['food_picture']
+    latitude =  request.files['latitude']
+    longitude = request.files['longitude']
+    price = request.files['price']
+
+    # logged_in_user_id = request.json.get("user_id")
+    # food_name = request.json.get('food_name')
+    # criterion_z1 = request.json.get('criterion_z1')
+    # criterion_z2 = request.json.get('criterion_z2')
+    # criterion_z3 = request.json.get('criterion_z3')
+    # criterion_z4 = request.json.get('criterion_z4')
+    # criterion_z5 = request.json.get('criterion_z5')
+    # food_picture = request.json.get('food_picture')
+    # latitude = request.json.get('latitude')
+    # longitude = request.json.get('longitude')
+    # price = request.json.get('price')
     # tag_list = request.json.get('tag_list')
                       
     food_already_exist = Food.select().where(Food.name == food_name, Food.latitude > latitude - 0.0002, Food.latitude < latitude + 0.0002, Food.longitude > longitude - 0.0002, Food.longitude < longitude + 0.0002)
+
+    food_already_exist_id_arr = [food_already_exist_element.id for food_already_exist_element in food_already_exist]
 
     jsonify({"err":"test1"})
     if food_already_exist:
@@ -176,14 +191,14 @@ def create():
         if review_already_exist:
             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
         else: 
-            new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
+            new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist_id_arr[0])
             if new_review_instance.save():
                 file = request.files['food_picture']
                 if file and allowed_file(file.filename):
                     file.filename = secure_filename(file.filename)
                     output = upload_file_to_s3(file,S3_BUCKET_NAME)
                     food_picture = str(output)
-                    new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist.id)
+                    new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist_id_arr[0])
                     if new_review_instance.save():
                     # Creation of tag    
                         # for tag_element in tag_list:
