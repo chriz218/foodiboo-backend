@@ -1,7 +1,7 @@
 from app import app
 from flask_cors import CORS
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, support_credentials=True, resources={r"/api/*": {"origins": "*"}})
 
 ## API Routes ##
 from foodiboo_api.blueprints.users.views import users_api_blueprint
