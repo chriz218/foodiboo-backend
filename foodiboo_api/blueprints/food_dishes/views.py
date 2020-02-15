@@ -182,15 +182,15 @@ def create():
                       
     food_already_exist = Food.select().where(Food.name == food_name, Food.latitude > latitude - 0.0002, Food.latitude < latitude + 0.0002, Food.longitude > longitude - 0.0002, Food.longitude < longitude + 0.0002)
 
-    print(food_already_exist, "FOOD ALREADY EXIST OBJECT")
+    # print(food_already_exist, "FOOD ALREADY EXIST OBJECT")
     food_already_exist_id_arr = [food_already_exist_element.id for food_already_exist_element in food_already_exist]
     
-    print(food_already_exist_id_arr, "FOOD ALREADY EXIST ARRAY")
-    print(food_already_exist_id_arr[0], "FIRST INDEX FOOD ALREADY EXIST")
+    # print(food_already_exist_id_arr, "FOOD ALREADY EXIST ARRAY")
+    # print(food_already_exist_id_arr[0], "FIRST INDEX FOOD ALREADY EXIST")
     if food_already_exist:
 
         review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist_id_arr[0])
-        print(review_already_exist, "REVIEW ALREADY EXIST")
+        # print(review_already_exist, "REVIEW ALREADY EXIST")
 
         if review_already_exist:
             print("HELLO WORLD I WENT IN ")
