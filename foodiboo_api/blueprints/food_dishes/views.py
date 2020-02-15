@@ -288,8 +288,8 @@ def create():
                         "criterion_z5": criterion_z5,
                         "food_id": new_food_instance.id,
                         "price": price,
-                        "latitude": int(latitude),
-                        "longitude": int(longitude)
+                        "latitude": float(latitude),
+                        "longitude": float(longitude)
                         # "tag_list": tag_list
                     }), 200
                 else:
