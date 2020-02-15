@@ -261,8 +261,8 @@ def create():
                 print(type(longitude), "LONTITUDE TYPE OF 2")
                 
                 new_food_instance = Food.get_or_none(name = food_name, longitude = longitude, latitude = latitude)
-                print(new_review_instance, "REVIEW INSTANCE")
-                print(new_review_instance.id, "REVIEW INSTANCE ID")
+                print(new_food_instance, "REVIEW INSTANCE")
+                print(new_food_instance.id, "REVIEW INSTANCE ID")
                 new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
                 if new_review_instance.save():
                 # Creation of tag    
