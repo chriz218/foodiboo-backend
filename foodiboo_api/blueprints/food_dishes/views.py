@@ -180,12 +180,14 @@ def create():
                       
     food_already_exist = Food.select().where(Food.name == food_name, Food.latitude > latitude - 0.0002, Food.latitude < latitude + 0.0002, Food.longitude > longitude - 0.0002, Food.longitude < longitude + 0.0002)
 
+    print(food_already_exist, "FOOD ALREADY EXIST OBJECT")
     food_already_exist_id_arr = [food_already_exist_element.id for food_already_exist_element in food_already_exist]
-
-    jsonify({"err":"test1"})
+    
+    print(food_already_exist_id_arr, "FOOD ALREADY EXIST ARRAY")
+    print(food_already_exist_id_arr[0], "FIRST INDEX FOOD ALREADY EXIST")
     if food_already_exist:
 
-        review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist.id)
+        review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist_id_arr[0])
 
         if review_already_exist:
             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
@@ -244,24 +246,24 @@ def create():
                 output = upload_file_to_s3(file,S3_BUCKET_NAME)
                 food_picture = str(output)
 
-                print(food_name,"NAME OF FOOD")
+                # print(food_name,"NAME OF FOOD")
                 
-                print(latitude, "LATTITUDE")
-                print(longitude, "LONGITUDE")
-                print(type(latitude), "LATITUDE TYPE OF")
-                print(type(longitude), "LONTITUDE TYPE OF")
+                # print(latitude, "LATTITUDE")
+                # print(longitude, "LONGITUDE")
+                # print(type(latitude), "LATITUDE TYPE OF")
+                # print(type(longitude), "LONTITUDE TYPE OF")
 
                 latitude = str(latitude)
                 longitude = str(longitude)
-                print(latitude, "LATTITUDE 2")
-                print(longitude, "LONGITUDE 2")
+                # print(latitude, "LATTITUDE 2")
+                # print(longitude, "LONGITUDE 2")
 
-                print(type(latitude), "LATITUDE TYPE OF 2")
-                print(type(longitude), "LONTITUDE TYPE OF 2")
+                # print(type(latitude), "LATITUDE TYPE OF 2")
+                # print(type(longitude), "LONTITUDE TYPE OF 2")
                 
                 new_food_instance = Food.get_or_none(name = food_name, longitude = longitude, latitude = latitude)
-                print(new_food_instance, "REVIEW INSTANCE")
-                print(new_food_instance.id, "REVIEW INSTANCE ID")
+                # print(new_food_instance, "REVIEW INSTANCE")
+                # print(new_food_instance.id, "REVIEW INSTANCE ID")
                 new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance.id)
                 if new_review_instance.save():
                 # Creation of tag    
