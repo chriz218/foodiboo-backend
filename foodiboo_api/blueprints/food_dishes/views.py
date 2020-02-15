@@ -286,10 +286,10 @@ def create():
                         "criterion_z3": criterion_z3,
                         "criterion_z4": criterion_z4,
                         "criterion_z5": criterion_z5,
-                        "food_id": new_food_instance_id,
+                        "food_id": new_food_instance.id,
                         "price": price,
-                        "latitude": latitude,
-                        "longitude": longitude
+                        "latitude": int(latitude),
+                        "longitude": int(longitude)
                         # "tag_list": tag_list
                     }), 200
                 else:
