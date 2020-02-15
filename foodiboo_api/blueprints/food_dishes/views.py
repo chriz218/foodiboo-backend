@@ -186,7 +186,6 @@ def create():
     if food_already_exist:
 
         review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist.id)
-        jsonify({"err":"test2"})
 
         if review_already_exist:
             return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
