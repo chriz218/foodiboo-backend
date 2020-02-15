@@ -12,7 +12,7 @@ from werkzeug.utils import secure_filename
 from math import floor
 from foodiboo_api.util.helpers import *
 from config import S3_BUCKET_NAME, S3_LOCATION
-from flask_cors import cross_origin
+# from flask_cors import cross_origin
 
 food_dishes_api_blueprint = Blueprint('food_dishes',
                             __name__,
@@ -25,7 +25,7 @@ food_dishes_api_blueprint = Blueprint('food_dishes',
 
 # Create a review
 @food_dishes_api_blueprint.route('/create', methods=['POST'])
-@cross_origin(supports_credentials=True)
+# @cross_origin(supports_credentials=True)
 # def create():
 #     logged_in_user_id = request.json.get("user_id")
 #     food_name = request.json.get('food_name')
