@@ -192,7 +192,8 @@ def create():
         review_already_exist = Review.get_or_none(user_id = logged_in_user_id, food_id = food_already_exist_id_arr[0])
 
         if review_already_exist:
-            return jsonify({"err": "You have already submitted a review for this dish in this location"}), 400
+            return jsonify({"status": "failed",
+                            "message": "You have already submitted a review for this dish in this location"}), 401
         else: 
             new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist_id_arr[0])
             if new_review_instance.save():
@@ -232,9 +233,9 @@ def create():
                         }), 200
                     else:
                         # if jsonify error 
-                        return jsonify({"err": "Something went wrong"}), 400
+                        return jsonify({"err": "Something went wrong"}), 401
                 else:
-                    return jsonify({"err": "Something went wrong"}), 400
+                    return jsonify({"err": "Something went wrong"}), 401
                     # if image fail to upload
     else:
         new_food_instance = Food(name = food_name, longitude = longitude, latitude = latitude, price = price)
@@ -297,12 +298,12 @@ def create():
                     }), 200
                 else:
                     # if jsonify error 
-                    return jsonify({"err": "Something went wrong"}), 400
+                    return jsonify({"err": "Something went wrong"}), 401
             else:
-                return jsonify({"err": "Something went wrong"}),400
+                return jsonify({"err": "Something went wrong"}),401
                 # if image fail to upload
         else:
-            return jsonify({"err": "Something went wrong"}), 400
+            return jsonify({"err": "Something went wrong"}), 401
             # if review instance failed to save
 
 
