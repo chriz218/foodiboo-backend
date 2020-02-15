@@ -249,6 +249,14 @@ def create():
                 print(longitude, "LONGITUDE")
                 print(type(latitude), "LATITUDE TYPE OF")
                 print(type(longitude), "LONTITUDE TYPE OF")
+
+                latitude = str(latitude)
+                longitude = str(longitude)
+                print(latitude, "LATTITUDE 2")
+                print(longitude, "LONGITUDE 2")
+
+                print(type(latitude), "LATITUDE TYPE OF 2")
+                print(type(longitude), "LONTITUDE TYPE OF 2")
                 
                 new_food_instance_id = Food.get(name = food_name, longitude = longitude, latitude = latitude)
                 print(new_review_instance, "REVIEW INSTANCE")
