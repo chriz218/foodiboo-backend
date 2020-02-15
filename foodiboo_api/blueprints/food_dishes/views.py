@@ -244,7 +244,15 @@ def create():
                 file.filename = secure_filename(file.filename)
                 output = upload_file_to_s3(file,S3_BUCKET_NAME)
                 food_picture = str(output)
-                new_food_instance_id = Food.get_or_none(name = food_name, longitude = longitude, latitude = latitude)
+                
+                print(latitude, "LATTITUDE")
+                print(longitude, "LONGITUDE")
+                print(type(latitude), "LATITUDE TYPE OF")
+                print(type(longitude), "LONTITUDE TYPE OF")
+                
+                new_food_instance_id = Food.get(name = food_name, longitude = longitude, latitude = latitude)
+                print(new_review_instance, "REVIEW INSTANCE")
+                print(new_review_instance.id, "REVIEW INSTANCE ID")
                 new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = new_food_instance_id.id)
                 if new_review_instance.save():
                 # Creation of tag    
