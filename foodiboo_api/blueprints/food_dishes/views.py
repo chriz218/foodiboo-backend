@@ -361,7 +361,10 @@ def show(food_name):
     
     if len(all_of_that_food) != 0:
         food_id_arr = [food.id for food in all_of_that_food]
-        food_price_arr = [food.price for food in all_of_that_food]
+        food_name_arr = [food.name for food in all_of_that_food]
+        food_price_arr = [str(food.price) for food in all_of_that_food]
+        food_latitude_arr = [food.latitude for food in all_of_that_food]
+        food_longitude_arr = [food.longitude for food in all_of_that_food]
         criterion_z1_list = []
         criterion_z2_list = []
         criterion_z3_list = []
@@ -396,6 +399,10 @@ def show(food_name):
         return jsonify({
             # "all_of_that_food": all_of_that_food
             "food_id_arr": food_id_arr,
+            "food_name_arr": food_name_arr,
+            "food_price_arr": food_price_arr,
+            "food_latitude_arr": food_latitude_arr,
+            "food_longitude_arr": food_longitude_arr,
             "criterion_z1_list": criterion_z1_list,
             "criterion_z2_list": criterion_z2_list,
             "criterion_z3_list": criterion_z3_list,
