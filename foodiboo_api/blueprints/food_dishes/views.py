@@ -197,6 +197,7 @@ def create():
             return jsonify({"status": "failed",
                             "message": "You have already submitted a review for this dish in this location"}), 400
         else: 
+            print("I AM CREATING A REVIEW INSTANCE")
             new_review_instance = Review(user_id = logged_in_user_id, food_picture = food_picture, criterion_z1 = criterion_z1, criterion_z2 = criterion_z2, criterion_z3 = criterion_z3, criterion_z4 = criterion_z4, criterion_z5 = criterion_z5, food_id = food_already_exist_id_arr[0])
             if new_review_instance.save():
                 file = request.files['food_picture']
