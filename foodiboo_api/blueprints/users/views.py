@@ -8,6 +8,10 @@ from flask_login import current_user
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from config import S3_BUCKET_NAME, S3_LOCATION
+from flask_jwt_extended import (
+    JWTManager, jwt_required, create_access_token,
+    get_jwt_identity, get_raw_jwt, jwt_refresh_token_required
+)
 # from foodiboo_web.util.helpers import *
 
 users_api_blueprint = Blueprint('users',
@@ -23,11 +27,17 @@ def sign_up():
     confirm_password = request.json.get('confirm_password')
     new_user_instance = User(name = name, email = email, password = password, confirm_password = confirm_password)
     if new_user_instance.save():
+        access_token = create_access_token(identity=name)
         return jsonify({
-                    "name": name,
-                    "email": email,
-                    "password": password
+            "status": "Success",
+            "token": access_token,
+            "user": {"name": name, "email": email, "id":new_user_instance.id}
         }), 200
+        # return jsonify({
+        #             "name": name,
+        #             "email": email,
+        #             "password": password
+        # }), 200
     else:
         return jsonify({
             'err': new_user_instance.errors
