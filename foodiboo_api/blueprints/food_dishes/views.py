@@ -447,7 +447,9 @@ def show_spec(food_name, id):
             "criterion_z4_list": criterion_z4_list,
             "criterion_z5_list": criterion_z5_list,
             "reviewers_list": reviewers_list,
-            "food_pic_list": food_pic_list
+            "food_pic_list": food_pic_list,
+            "food_latitude": food.latitude,
+            "food_longitude": food.longitude
         })
 
     else:
